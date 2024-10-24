@@ -20,6 +20,13 @@ public class WishListController {
         return ResponseEntity.ok(updatedWishlist);
     }
 
+    //get wishlist by userid
+    @GetMapping("/{userid}")
+    public ResponseEntity<WishlistDto> getWishlist(@PathVariable int userid){
+        WishlistDto wishlistDto=wishListService.getWishlistByUserID(userid);
+        return ResponseEntity.ok(wishlistDto);
+    }
+
     // Move products to cart
     @PostMapping("/move-to-cart/{userId}")
     public ResponseEntity<Void> moveProductsToCart(@PathVariable int userId) {
@@ -37,4 +44,11 @@ public class WishListController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/remove/{userId}")
+    public void removeWishlistwithproducts(@PathVariable int userid){
+      wishListService.deleteWIshList(userid);
+      ResponseEntity.ok("wishlist deleted");
+    }
+
 }

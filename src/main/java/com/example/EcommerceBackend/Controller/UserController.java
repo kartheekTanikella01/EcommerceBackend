@@ -1,5 +1,6 @@
 package com.example.EcommerceBackend.Controller;
 
+import com.example.EcommerceBackend.DTO.UserDTO;
 import com.example.EcommerceBackend.Entity.User;
 import com.example.EcommerceBackend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,38 +21,39 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Create a new user
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
         try {
-            User createdUser = userService.createUser(user);
+            UserDTO createdUser = userService.createUser(user);
             return ResponseEntity.ok(createdUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    // Get a user by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable int userId) {
+        try {
+            UserDTO userDto = userService.getUserById(userId);
+            return ResponseEntity.ok(userDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     // Update a user by ID
-    @PutMapping("/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User userDetails) {
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDto) {
         try {
-            User updatedUser = userService.updateUser(id, userDetails);
+            UserDTO updatedUser = userService.updateUser(id, userDto);
             return ResponseEntity.ok(updatedUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    // Delete a user by ID
-    @DeleteMapping("/delete/{id}")
+    // Delete User
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         try {
             userService.deleteUser(id);

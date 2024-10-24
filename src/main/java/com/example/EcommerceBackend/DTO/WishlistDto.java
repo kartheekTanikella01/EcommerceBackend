@@ -1,5 +1,6 @@
 package com.example.EcommerceBackend.DTO;
 
+import com.example.EcommerceBackend.Entity.Product;
 import com.example.EcommerceBackend.Entity.User;
 
 import java.util.List;
@@ -7,17 +8,17 @@ import java.util.List;
 public class WishlistDto {
 
     private Integer id;
-    private List<ProductDto> productDtos;
+    private List<Product> product;
 
-    private User userId;
+    private Integer userId;
 
     public WishlistDto() {
 
     }
 
-    public WishlistDto(Integer id, List<ProductDto> productDtos, User userId) {
+    public WishlistDto(Integer id, List<ProductDto> productDtos, Integer userId) {
         this.id = id;
-        this.productDtos = productDtos;
+        this.product = product;
         this.userId = userId;
     }
 
@@ -29,19 +30,19 @@ public class WishlistDto {
         this.id = id;
     }
 
-    public List<ProductDto> getProductDtos() {
-        return productDtos;
+    public List<Product> getProduct() {
+        return product;
     }
 
-    public void setProductDtos(List<ProductDto> productDtos) {
-        this.productDtos = productDtos;
+    public void setProduct(List<Product> product) {
+        this.product = product;
     }
 
-    public User getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(User userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 }

@@ -21,7 +21,7 @@ public class ProductController {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @PostMapping
+    @PostMapping("/sellar")
     public ResponseEntity<APIResponse> createProduct(@RequestBody ProductDto productDto) {
         // Check if the category exists using categoryId from productDto
         Optional<Category> optionalCategory = categoryRepository.findById(productDto.getCategoryId());
@@ -43,7 +43,15 @@ public class ProductController {
         List<ProductDto> products = productService.getAllProducts();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
-    @PutMapping("/{productId}")
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductbyId(@PathVariable int id){
+        ProductDto productDto=productService.getProductByid(id);
+
+        return  new ResponseEntity<>(productDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/sellar/{productId}")
     public ResponseEntity<APIResponse> updateProduct(@PathVariable("productId") Integer productId, @RequestBody ProductDto productDto) throws Exception {
         Optional<Category> optionalCategory = categoryRepository.findById(productDto.getCategoryId());
         if (!optionalCategory.isPresent()) {
@@ -51,6 +59,11 @@ public class ProductController {
         }
         productService.updateProduct(productDto, productId);
         return new ResponseEntity<APIResponse>(new APIResponse(true, "product has been updated"), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/sellar/{productId}")
+    public  void deleteProduct(@PathVariable("productId") Integer productId){
+        productService.deleteProduct(productId);
     }
 
 }

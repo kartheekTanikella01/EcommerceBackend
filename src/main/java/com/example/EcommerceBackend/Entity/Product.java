@@ -16,7 +16,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    Category category;
+    private Category category;
 
     @ManyToMany(mappedBy = "products")
     private List<Cart> carts;

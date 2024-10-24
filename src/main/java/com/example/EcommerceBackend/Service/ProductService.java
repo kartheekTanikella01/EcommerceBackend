@@ -40,6 +40,21 @@ public class ProductService {
         return productDtos;
     }
 
+    public  ProductDto getProductByid(int id){
+        Product product=productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found"));
+
+        return getProductDto(product);
+
+    }
+
+    public void deleteProduct(int id){
+        Product product=productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found"));
+
+        productRepository.delete(product);
+    }
+
     public ProductDto getProductDto(Product product){
         ProductDto productDto=new ProductDto();
         productDto.setDescription(product.getDescription());

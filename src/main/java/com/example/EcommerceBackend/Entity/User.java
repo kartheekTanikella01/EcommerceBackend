@@ -1,12 +1,18 @@
 package com.example.EcommerceBackend.Entity;
 
+import com.example.EcommerceBackend.enums.UserRoles;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -29,38 +35,36 @@ public class User {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private WishList wishList;
 
-    // One user can have many addresses
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<UserRoles> userRoles = new ArrayList<>();
+
+    public User() {}
 
 
-    public User() {
-    }
-
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName, String email, String password,List<UserRoles> userRoles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+            this.userRoles = userRoles;
+
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return userRoles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name())
+                ).collect(Collectors.toList());
     }
 
-    public WishList getWishList() {
-        return wishList;
-    }
 
-    public void setWishList(WishList wishList) {
-        this.wishList = wishList;
-    }
 
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
+    // Getters and setters...
 
     public Integer getId() {
         return id;
@@ -98,8 +102,29 @@ public class User {
         return password;
     }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public WishList getWishList() {
+        return wishList;
+    }
+
+    public void setWishList(WishList wishList) {
+        this.wishList = wishList;
     }
 
     public List<Address> getAddresses() {
@@ -109,4 +134,17 @@ public class User {
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
     }
+    public List<UserRoles> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<UserRoles> userRoles) {
+        this.userRoles = userRoles;
+    }
+
+
+
+
 }
+
+

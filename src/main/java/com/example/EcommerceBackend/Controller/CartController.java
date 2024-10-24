@@ -47,5 +47,14 @@ public class CartController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    //delete entire cart with products
+
+    @DeleteMapping("/remove/{userId}")
+    public void removeCartwithProducts(@PathVariable Integer userId){
+        cartService.deletecartbyuserid(userId);
+        ResponseEntity.ok("Cart deleted");
+    }
+
 }
 

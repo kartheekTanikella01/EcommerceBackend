@@ -13,6 +13,9 @@ public class CartDto {
 
     private List<ProductDto> product=new ArrayList<>();
 
+
+    private double totalPrice; // New field
+
     public CartDto() {
     }
 
@@ -23,6 +26,18 @@ public class CartDto {
     public CartDto(List<ProductDto> product) {
 
         this.product = product;
+    }
+
+    public CartDto(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public CartDto(int userId, List<Product> products) {

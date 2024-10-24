@@ -48,4 +48,9 @@ public class Cart {
     public void setUser(User user) {
         this.user = user;
     }
+    public double calculateTotalPrice() {
+        return products.stream()
+                .mapToDouble(Product::getPrice) // Assuming Product has a getPrice() method
+                .sum();
+    }
 }

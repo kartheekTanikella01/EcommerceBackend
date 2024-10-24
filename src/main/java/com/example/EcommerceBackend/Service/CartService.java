@@ -5,6 +5,7 @@ import com.example.EcommerceBackend.DTO.ProductDto;
 import com.example.EcommerceBackend.Entity.Cart;
 import com.example.EcommerceBackend.Entity.Product;
 import com.example.EcommerceBackend.Entity.User;
+import com.example.EcommerceBackend.Entity.WishList;
 import com.example.EcommerceBackend.Repository.CartRepository;
 import com.example.EcommerceBackend.Repository.ProductRepository;
 import com.example.EcommerceBackend.Repository.UserRepo;
@@ -61,6 +62,9 @@ public class CartService {
         if (cart == null) {
             throw new Exception("Cart not found for user with ID " + userId);
         }
+        CartDto cartDto=new CartDto();
+        cartDto.setTotalPrice(cart.calculateTotalPrice());
+
 
         return convertCartToDto(cart);
     }
@@ -88,7 +92,19 @@ public class CartService {
         return convertCartToDto(cart);
     }
 
-//fetch all products from a specific category
+    public void deletecartbyuserid(int userid){
+        User user=userRepo.findById(userid)
+                .orElseThrow(()->new RuntimeException("user not found"));
+
+        Cart cart=cartRepository.findByUserId(userid)
+                .orElseThrow(()->new RuntimeException("caert not found"));
+
+        cart.getProducts().clear();
+        cartRepository.delete(cart);
+
+    }
+
+
 
     private CartDto convertCartToDto(Cart cart) {
         CartDto cartDto = new CartDto();

@@ -13,6 +13,7 @@ import com.example.EcommerceBackend.Repository.WishlistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class WishListService {
         }
 
         List<Product> products = productRepository.findAllById(
-                wishlistDto.getProductDtos().stream().map(ProductDto::getId).collect(Collectors.toList())
+                wishlistDto.getProduct().stream().map(Product::getId).collect(Collectors.toList())
         );
 
         wishList.getProducts().addAll(products);
@@ -90,17 +91,34 @@ public class WishListService {
         return convertWishListToDto(wishList);
     }
 
+    //delete entire wishlist with products
+    public void deleteWIshList(int userid){
+        User user=userRepo.findById(userid)
+                .orElseThrow(()-> new RuntimeException("user not found"));
+
+        WishList wishList=wishlistRepository.findByUserId(userid)
+                .orElseThrow(()->new RuntimeException("whishlist user not found"));
+
+        wishList.getProducts().clear();
+        wishlistRepository.delete(wishList);
+    }
+    //Show products in wishlist
+    public WishlistDto getWishlistByUserID(Integer userId){
+        User user=userRepo.findById(userId)
+                .orElseThrow(()->new RuntimeException("user not found"));
+
+        WishList wishList=wishlistRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("user wishlist not found"));
+
+        return convertWishListToDto(wishList);
+
+    }
+
     private WishlistDto convertWishListToDto(WishList wishList) {
         WishlistDto wishlistDto = new WishlistDto();
         wishlistDto.setId(wishList.getId());
-        wishlistDto.setProductDtos(
-                wishList.getProducts().stream().map(product -> new ProductDto(
-                        product.getId(),
-                        product.getName(),
-                        product.getPrice(),
-                        product.getDescription()
-                )).collect(Collectors.toList())
-        );
+        wishlistDto.setUserId(wishList.getUser().getId());
+        wishlistDto.setProduct(new ArrayList<>(wishList.getProducts()));
         return wishlistDto;
     }
 }
