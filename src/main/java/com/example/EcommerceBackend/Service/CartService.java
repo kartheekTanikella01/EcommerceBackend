@@ -26,33 +26,26 @@ public class CartService {
     private UserRepo userRepo;
 
     // Add products to the user's cart
-    public CartDto addProductsToUserCart(CartDto cartDto,int userId) throws Exception {
-        // Fetch the user by ID
-        User user = userRepo.findById(cartDto.getUserid())
-                .orElseThrow(() -> new Exception("User with ID " + cartDto.getUserid() + " not found"));
+    public CartDto addProductsToUserCart(CartDto cartDto, int userId) throws Exception {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new Exception("User with ID " + userId + " not found"));
 
-        // Get or create the user's cart
         Cart cart = user.getCart();
-
         if (cart == null) {
             cart = new Cart();
             cart.setUser(user);
         }
 
-        // Fetch products by their IDs from the DTO
         List<Product> products = productRepository.findAllById(cartDto.getProduct().stream()
                 .map(ProductDto::getId)
                 .collect(Collectors.toList()));
 
-        // Add products to the cart
         cart.getProducts().addAll(products);
-
-        // Save the cart
         cartRepository.save(cart);
 
-        // Return updated CartDto
         return convertCartToDto(cart);
     }
+
 
     public CartDto getCartByUserId(Integer userId) throws Exception {
         User user = userRepo.findById(userId)
@@ -64,7 +57,6 @@ public class CartService {
         }
         CartDto cartDto=new CartDto();
         cartDto.setTotalPrice(cart.calculateTotalPrice());
-
 
         return convertCartToDto(cart);
     }
@@ -92,31 +84,30 @@ public class CartService {
         return convertCartToDto(cart);
     }
 
-    public void deletecartbyuserid(int userid){
-        User user=userRepo.findById(userid)
-                .orElseThrow(()->new RuntimeException("user not found"));
+    public void deletecartbyuserid(int userId) throws RuntimeException {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart=cartRepository.findByUserId(userid)
-                .orElseThrow(()->new RuntimeException("caert not found"));
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        cart.getProducts().clear();
-        cartRepository.delete(cart);
-
+        cart.getProducts().clear(); // Clear products in the cart
+        cartRepository.delete(cart); // Delete the cart
     }
-
-
 
     private CartDto convertCartToDto(Cart cart) {
         CartDto cartDto = new CartDto();
         cartDto.setUserid(cart.getUser().getId());
+        cartDto.setTotalPrice(cart.calculateTotalPrice()); // Set total price here
+
         List<ProductDto> productDtos = cart.getProducts().stream()
                 .map(product -> new ProductDto(product.getId(), product.getName(),
-                        product.getPrice(),product.getDescription()
-                ))
+                        product.getPrice(), product.getDescription()))
                 .collect(Collectors.toList());
         cartDto.setProduct(productDtos);
         return cartDto;
     }
+
 
 
 }

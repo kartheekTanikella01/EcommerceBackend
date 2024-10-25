@@ -12,13 +12,15 @@ public class UserDTO {
     private String password;
     private List<String> userRoles; // Ensure this field exists
 
+
+
     // Constructors, getters, setters
 
-    public UserDTO(Integer id, String firstName, String lastName, String email, String password, List<String> roles) {
+    public UserDTO() {
     }
 
 
-    public UserDTO(Integer id, String firstName, String lastName, String email, List<String> roles,String password) {
+    public UserDTO(Integer id, String firstName, String lastName, String email, String password, List<String> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

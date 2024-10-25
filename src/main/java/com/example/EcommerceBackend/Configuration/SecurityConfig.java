@@ -23,7 +23,7 @@ public class SecurityConfig {
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf->csrf.disable())
                 .authorizeRequests()
-                .requestMatchers("/users/create").permitAll()  // Allow user registration
+                .requestMatchers("/users/**").permitAll()  // Allow user registration
                 .anyRequest().authenticated();
 
         return http.build();

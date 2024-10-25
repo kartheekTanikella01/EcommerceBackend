@@ -4,9 +4,7 @@ import com.example.EcommerceBackend.DTO.UserDTO;
 
 import com.example.EcommerceBackend.Entity.Address;
 import com.example.EcommerceBackend.Entity.User;
-import com.example.EcommerceBackend.Repository.AddressRepository;
-import com.example.EcommerceBackend.Repository.OrderRepo;
-import com.example.EcommerceBackend.Repository.UserRepo;
+import com.example.EcommerceBackend.Repository.*;
 import com.example.EcommerceBackend.enums.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +24,10 @@ public class UserService {
     @Autowired
     private OrderRepo orderRepo;
 
+    @Autowired
+    private CartRepository cartRepository;
+    @Autowired
+    private WishlistRepository wishlistRepository;
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
@@ -47,6 +49,10 @@ public class UserService {
                 .map(UserRoles::valueOf)
                 .collect(Collectors.toList());
         user.setUserRoles(roles);
+        //add role to user table
+        user.setRole(roles.stream()
+                .map(Enum::name)
+                .collect(Collectors.joining(",")));
 
         User savedUser = userRepo.save(user);
         return convertToUserDto(savedUser);
@@ -72,7 +78,7 @@ public class UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
 
-        // Updating the roles if needed
+        // Updating the roles
         List<UserRoles> roles = userDto.getUserRoles().stream()
                 .map(UserRoles::valueOf)
                 .collect(Collectors.toList());
@@ -82,16 +88,29 @@ public class UserService {
         return convertToUserDto(updatedUser);
     }
 
+
     @Transactional
     public void deleteUser(Integer userId) throws Exception {
+        // Fetch user with optional handling
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new Exception("User with ID " + userId + " not found"));
 
-        if (user.getCart() != null) user.setCart(null);
-        if (user.getWishList() != null) user.setWishList(null);
+        // Delete the Cart if it exists
+        if (user.getCart() != null) {
+            cartRepository.delete(user.getCart());
+            user.setCart(null); // Nullify the reference in User
+        }
 
+        // Delete the WishList if it exists
+        if (user.getWishList() != null) {
+            wishlistRepository.delete(user.getWishList());
+            user.setWishList(null); // Nullify the reference in User
+        }
+
+        // Delete any associated orders with this user
         orderRepo.deleteByUserId(userId);
 
+        // Handle deletion of addresses related to this user
         List<Address> addresses = user.getAddresses();
         if (addresses != null && !addresses.isEmpty()) {
             for (Address address : addresses) {
@@ -99,8 +118,10 @@ public class UserService {
             }
         }
 
+        // Finally, delete the user record itself
         userRepo.delete(user);
     }
+
 
     private UserDTO convertToUserDto(User user) {
         List<String> roles = user.getUserRoles().stream()

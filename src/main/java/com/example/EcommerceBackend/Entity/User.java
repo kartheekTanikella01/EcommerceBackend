@@ -44,15 +44,18 @@ public class User implements UserDetails {
     @Column(name = "role")
     private List<UserRoles> userRoles = new ArrayList<>();
 
+    private String role;
+
     public User() {}
 
 
-    public User(String firstName, String lastName, String email, String password,List<UserRoles> userRoles) {
+    public User(String firstName, String lastName, String email, String password,List<UserRoles> userRoles,String role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-            this.userRoles = userRoles;
+        this.userRoles = userRoles;
+        this.role=role;
 
     }
     @Override
@@ -142,9 +145,13 @@ public class User implements UserDetails {
         this.userRoles = userRoles;
     }
 
+    public String getRole() {
+        return role;
+    }
 
-
-
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
 
 

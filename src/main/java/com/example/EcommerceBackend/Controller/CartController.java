@@ -51,10 +51,15 @@ public class CartController {
     //delete entire cart with products
 
     @DeleteMapping("/remove/{userId}")
-    public void removeCartwithProducts(@PathVariable Integer userId){
-        cartService.deletecartbyuserid(userId);
-        ResponseEntity.ok("Cart deleted");
+    public ResponseEntity<String> removeCartWithProducts(@PathVariable Integer userId) {
+        try {
+            cartService.deletecartbyuserid(userId);
+            return ResponseEntity.ok("Cart and associated products deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
 
 }
 
