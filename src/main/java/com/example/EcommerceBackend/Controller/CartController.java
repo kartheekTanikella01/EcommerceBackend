@@ -1,65 +1,30 @@
 package com.example.EcommerceBackend.Controller;
 
-
 import com.example.EcommerceBackend.DTO.CartDto;
 import com.example.EcommerceBackend.Service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
+
     @Autowired
     private CartService cartService;
 
-    // Add products to the user's cart
-    @PostMapping("/add/{userId}") // Add userId as a path variable
-    public ResponseEntity<CartDto> addProductsToCart(@PathVariable int userId, @RequestBody CartDto cartDto) {
-        try {
-            CartDto updatedCart = cartService.addProductsToUserCart(cartDto, userId); // Pass the userId to the service
-            return ResponseEntity.ok(updatedCart);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    @PostMapping("/{userId}/add/{productId}")
+    public void addProductToCart(@PathVariable int userId, @PathVariable int productId, @RequestParam int quantity) {
+        cartService.addProductToCart(userId, productId, quantity);
     }
 
-
-    // Get the cart by user ID
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<CartDto> getCartByUserId(@PathVariable Integer userId) {
-        try {
-            CartDto cartDto = cartService.getCartByUserId(userId);
-            return ResponseEntity.ok(cartDto);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    @GetMapping("/{userId}")
+    public CartDto getCart(@PathVariable int userId) {
+        return cartService.getCart(userId);
     }
 
-    // Remove a product from the user's cart
-    @DeleteMapping("/remove/{userId}/{productId}")
-    public ResponseEntity<CartDto> removeProductFromCart(@PathVariable Integer userId, @PathVariable Integer productId) {
-        try {
-            CartDto updatedCart = cartService.removeProductFromCart(userId, productId);
-            return ResponseEntity.ok(updatedCart);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    @DeleteMapping("/{userId}/clear")
+    public void clearCart(@PathVariable int userId) {
+        cartService.clearCart(userId);
     }
-
-    //delete entire cart with products
-
-    @DeleteMapping("/remove/{userId}")
-    public ResponseEntity<String> removeCartWithProducts(@PathVariable Integer userId) {
-        try {
-            cartService.deletecartbyuserid(userId);
-            return ResponseEntity.ok("Cart and associated products deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-
 }
 

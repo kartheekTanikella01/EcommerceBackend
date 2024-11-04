@@ -17,7 +17,6 @@ public class ProductDto {
         this.name = name;
         this.price = price;
         this.description = description;
-        this.categoryId = categoryId;
     }
 
     public Integer getId() {

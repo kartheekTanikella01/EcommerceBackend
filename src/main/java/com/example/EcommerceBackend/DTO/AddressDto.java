@@ -1,33 +1,25 @@
 package com.example.EcommerceBackend.DTO;
 
-public class AddressDTO {
-    private Integer id;
 
+public class AddressDto {
     private String street;
     private String city;
     private String state;
-    private String zipCode;
     private String country;
+    private String zipCode;
 
-    public AddressDTO() {
+    public AddressDto() {
     }
 
-    public AddressDTO(Integer id, String street, String city, String state, String zipCode, String country) {
-        this.id = id;
+    public AddressDto(String street, String city, String state, String country, String zipCode) {
         this.street = street;
         this.city = city;
         this.state = state;
-        this.zipCode = zipCode;
         this.country = country;
+        this.zipCode = zipCode;
     }
+    // Getters and setters
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getStreet() {
         return street;
@@ -53,14 +45,6 @@ public class AddressDTO {
         this.state = state;
     }
 
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
     public String getCountry() {
         return country;
     }
@@ -68,4 +52,13 @@ public class AddressDTO {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 }
+

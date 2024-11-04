@@ -15,20 +15,20 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    // checking out cart and creating an order
-    @PostMapping("/user/{userId}/{addressId}")
-    public ResponseEntity<OrderDto> checkout(@PathVariable("userId") Integer userId,@PathVariable("addressId") Integer addressId) {
-        try {
-            OrderDto orderDto = orderService.checkoutCart(userId,addressId);
-            return new ResponseEntity<>(orderDto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping("/create/{userId}")
+    public ResponseEntity<OrderDto> createOrderFromCart(@PathVariable int userId) {
+        OrderDto order = orderService.createOrderFromCart(userId);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<OrderDto>> getAllOrdersByUserId(@PathVariable int userId) {
+        List<OrderDto> orders = orderService.getOrdersByUserId(userId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<OrderDto>> getAllOrders(){
-        List<OrderDto> orderDtos=orderService.getALlOrders();
-        return ResponseEntity.ok(orderDtos);
+    @DeleteMapping("/cancel/{orderId}/{userId}")
+    public ResponseEntity<String> cancelOrder(@PathVariable int orderId, @PathVariable int userId) {
+        String message = orderService.cancelOrder(orderId, userId);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

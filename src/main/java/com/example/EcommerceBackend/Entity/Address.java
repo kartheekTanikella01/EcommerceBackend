@@ -2,40 +2,39 @@ package com.example.EcommerceBackend.Entity;
 
 import jakarta.persistence.*;
 
+
+
 @Entity
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
+    @Column(nullable = false)
     private String street;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String state;
-    private String zipCode;
+
+    @Column(nullable = false)
     private String country;
 
-    // Many addresses can belong to one user
+    @Column(nullable = false)
+    private String zipCode;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Address() {
-    }
-
-    public Address(String street, String city, String state, String zipCode, String country, User user) {
-        this.street = street;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.country = country;
-        this.user = user;
-    }
-
-    public Integer getId() {
+    // Getters and setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -63,20 +62,20 @@ public class Address {
         this.state = state;
     }
 
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
     public String getCountry() {
         return country;
     }
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public User getUser() {
@@ -86,5 +85,5 @@ public class Address {
     public void setUser(User user) {
         this.user = user;
     }
-
 }
+

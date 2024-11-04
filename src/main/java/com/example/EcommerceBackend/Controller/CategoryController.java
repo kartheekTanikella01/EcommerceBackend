@@ -1,6 +1,7 @@
 package com.example.EcommerceBackend.Controller;
 
 import com.example.EcommerceBackend.Common.APIResponse;
+import com.example.EcommerceBackend.DTO.CategoryDto;
 import com.example.EcommerceBackend.Entity.Category;
 import com.example.EcommerceBackend.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +18,29 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/create")
-    public void createCategory(@RequestBody Category category){
+    @PostMapping("/admin/create")
+    public void createCategory(@RequestBody CategoryDto category){
          categoryService.createCategory(category);
     }
-    @GetMapping
-    public List<Category> allCategories(){
+    @GetMapping("/admin")
+    public List<CategoryDto> allCategories(){
         return categoryService.getAllCategories();
     }
 
-    @GetMapping("/{id}")
-    public Category categoryById(@PathVariable int id){
+    @GetMapping("/admin/{id}")
+    public CategoryDto categoryById(@PathVariable int id){
         return categoryService.getCategoryById(id);
     }
 
-    @PutMapping ("/update/{categoryId}")
-    public ResponseEntity<APIResponse> updateCategory(@PathVariable("categoryId") int categoryId, @RequestBody Category category ) {
+    @PutMapping ("/admin/update/{categoryId}")
+    public ResponseEntity<APIResponse> updateCategory(@PathVariable("categoryId") int categoryId, @RequestBody CategoryDto category ) {
         System.out.println("category id " + categoryId);
-        Category category1= categoryService.getCategoryById(categoryId);
-        categoryService.UpdateCategory(categoryId, category);
+        CategoryDto category1= categoryService.getCategoryById(categoryId);
+        categoryService.updateCategory(categoryId, category);
         return new ResponseEntity<APIResponse>(new APIResponse(true, "category has been updated"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public void deleteById(@PathVariable int id){
         categoryService.deleteCategory(id);
 

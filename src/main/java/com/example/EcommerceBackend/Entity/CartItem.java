@@ -1,38 +1,42 @@
 package com.example.EcommerceBackend.Entity;
 
+
 import jakarta.persistence.*;
 
+
 @Entity
-public class OrderItems {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart; // Reference to the Cart
 
     private int quantity;
-    private double price;
 
-    public OrderItems() {
+    public CartItem() {
     }
 
-    public OrderItems(int quantity, double price) {
+    public CartItem(int quantity) {
         this.quantity = quantity;
-        this.price = price;
     }
 
-    public Integer getId() {
+    public double getSubtotal() {
+        return product.getPrice() * quantity;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -44,14 +48,6 @@ public class OrderItems {
         this.product = product;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public int getQuantity() {
         return quantity;
     }
@@ -60,11 +56,11 @@ public class OrderItems {
         this.quantity = quantity;
     }
 
-    public double getPrice() {
-        return price;
+    public Cart getCart() {
+        return cart;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

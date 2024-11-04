@@ -1,74 +1,64 @@
 package com.example.EcommerceBackend.Controller;
 
-import com.example.EcommerceBackend.DTO.UserDTO;
+import com.example.EcommerceBackend.DTO.AddressDto;
 import com.example.EcommerceBackend.Entity.User;
-import com.example.EcommerceBackend.Service.UserService;
+import com.example.EcommerceBackend.Service.UserImplementationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+
 public class UserController {
 
+    private final UserImplementationService userService;
+
     @Autowired
-    private UserService userService;
-
-    @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
-        try {
-            UserDTO createdUser = userService.createUser(user);
-            return ResponseEntity.ok(createdUser);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public UserController(UserImplementationService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable int userId) {
-        try {
-            UserDTO userDto = userService.getUserById(userId);
-            return ResponseEntity.ok(userDto);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    // Public endpoint for user registration
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        return userService.createUser(user);
     }
 
-    // Update a user by ID
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDto) {
-        try {
-            UserDTO updatedUser = userService.updateUser(id, userDto);
-            return ResponseEntity.ok(updatedUser);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    // Admin endpoints
+    @GetMapping("/admin")
+    public List<User> getAllUsers() {
+        return userService.findAllUsers();
     }
 
-    // Delete User
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return userService.findUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
     @DeleteMapping("/admin/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // Get all users
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    // User endpoints for address management
+    @PostMapping("/{userId}/address")
+    public ResponseEntity<String> addAddressToUser(@PathVariable int userId, @RequestBody AddressDto addressDTO) {
+        userService.addAddressToUser(userId, addressDTO);
+        return ResponseEntity.ok("Address added successfully");
+    }
+
+    @GetMapping("/admin/{userId}/addresses")
+    public List<AddressDto> getUserAddresses(@PathVariable int userId) {
+        return userService.getUserAddresses(userId);
     }
 }
-
-

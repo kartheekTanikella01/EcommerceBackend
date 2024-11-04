@@ -1,35 +1,27 @@
 package com.example.EcommerceBackend.DTO;
 
-
-
-import com.example.EcommerceBackend.Entity.Product;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class CartDto {
-
-    private Integer userid;
-
-    private List<ProductDto> product=new ArrayList<>();
-
-
-    private double totalPrice; // New field
+    private int id;
+    private double totalPrice;
+    private List<CartItemDto> items;
 
     public CartDto() {
     }
 
-    public CartDto(Integer userid) {
-        this.userid = userid;
-    }
-
-    public CartDto(List<ProductDto> product) {
-
-        this.product = product;
-    }
-
-    public CartDto(double totalPrice) {
+    public CartDto(int id, double totalPrice, List<CartItemDto> items) {
+        this.id = id;
         this.totalPrice = totalPrice;
+        this.items = items;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getTotalPrice() {
@@ -40,22 +32,11 @@ public class CartDto {
         this.totalPrice = totalPrice;
     }
 
-    public CartDto(int userId, List<Product> products) {
+    public List<CartItemDto> getItems() {
+        return items;
     }
 
-    public Integer getUserid() {
-        return userid;
-    }
-
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
-
-    public List<ProductDto> getProduct() {
-        return product;
-    }
-
-    public void setProduct(List<ProductDto> product) {
-        this.product = product;
+    public void setItems(List<CartItemDto> items) {
+        this.items = items;
     }
 }

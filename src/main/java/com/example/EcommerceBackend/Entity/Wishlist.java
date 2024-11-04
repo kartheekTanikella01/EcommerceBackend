@@ -1,33 +1,36 @@
 package com.example.EcommerceBackend.Entity;
 
+
 import jakarta.persistence.*;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class WishList {
+public class Wishlist {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "wishlist_products",
+    @ManyToMany
+    @JoinTable(
+            name = "wishlist_products",
             joinColumns = @JoinColumn(name = "wishlist_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products = new ArrayList<>();
+    private List<Product> products=new ArrayList<>();
 
-    public WishList() {
-    }
-
-    public Integer getId() {
+    // Getters and Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -47,3 +50,4 @@ public class WishList {
         this.products = products;
     }
 }
+

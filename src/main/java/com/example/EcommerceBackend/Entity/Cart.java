@@ -9,38 +9,38 @@ import java.util.List;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name="cart_products",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products=new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
+    private List<CartItem> items = new ArrayList<>();
 
     public Cart() {
     }
 
-    public Integer getId() {
+    public Cart(List<CartItem> items, double totalPrice) {
+        this.items = items;
+        this.totalPrice = totalPrice;
+    }
+
+    private double totalPrice = 0.0; // New field for total cost
+
+    public void updateTotalPrice() {
+        this.totalPrice = items.stream().mapToDouble(CartItem::getSubtotal).sum();
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
     public User getUser() {
         return user;
     }
@@ -48,9 +48,20 @@ public class Cart {
     public void setUser(User user) {
         this.user = user;
     }
-    public double calculateTotalPrice() {
-        return products.stream()
-                .mapToDouble(Product::getPrice) // Assuming Product has a getPrice() method
-                .sum();
+
+    public List<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

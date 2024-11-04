@@ -1,43 +1,46 @@
 package com.example.EcommerceBackend.Entity;
 
-
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="orders")
+@Table(name = "customer_order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItems> orderItems=new ArrayList<>();
+    private double totalPrice;
 
-    private LocalDateTime orderDate;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address deliveryAddress;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
+    private Date orderDate;
 
     public Order() {
     }
 
-    public Order(LocalDateTime orderDate) {
+    public Order(int id, User user, double totalPrice, List<OrderItem> items, Date orderDate) {
+        this.id = id;
+        this.user = user;
+        this.totalPrice = totalPrice;
+        this.items = items;
         this.orderDate = orderDate;
     }
 
-    public Integer getId() {
+    // Getters and setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -49,27 +52,27 @@ public class Order {
         this.user = user;
     }
 
-    public List<OrderItems> getOrderItems() {
-        return orderItems;
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setOrderItems(List<OrderItems> orderItems) {
-        this.orderItems = orderItems;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public LocalDateTime getOrderDate() {
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
-    }
-
-    public Address getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(Address deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
     }
 }

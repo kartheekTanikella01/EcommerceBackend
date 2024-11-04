@@ -1,82 +1,83 @@
 package com.example.EcommerceBackend.Service;
 
-import com.example.EcommerceBackend.DTO.ReviewDTO;
+import com.example.EcommerceBackend.DTO.ReviewDto;
 import com.example.EcommerceBackend.Entity.Product;
-import com.example.EcommerceBackend.Entity.Reviews;
+import com.example.EcommerceBackend.Entity.Review;
 import com.example.EcommerceBackend.Entity.User;
 import com.example.EcommerceBackend.Repository.ProductRepository;
 import com.example.EcommerceBackend.Repository.ReviewRepository;
 import com.example.EcommerceBackend.Repository.UserRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
-
     @Autowired
     private ReviewRepository reviewRepository;
+
     @Autowired
-    private UserRepo userRepo;
+    private UserRepo userRepository;
+
+    @Autowired
     private ProductRepository productRepository;
-//Add a review
-    public ReviewDTO addReview(ReviewDTO reviewDTO){
-        User user =userRepo.findById(reviewDTO.getUserId())
-                .orElseThrow(
-                        ()->new RuntimeException("USer not found")
-                );
-        Product product=productRepository.findById(reviewDTO.getProductId())
-                .orElseThrow(
-                        ()-> new RuntimeException("Product not found")
-                );
-        Reviews reviews=new Reviews();
-        reviews.setId(reviewDTO.getId());
-        reviews.setProduct(product);
-        reviews.setStars(reviewDTO.getStars());
-        reviews.setComments(reviewDTO.getComment());
-        reviews.setUser(user);
 
-        reviewRepository.save(reviews);
-        return converReviewToDTO(reviews);
-
-    }
-
-    public List<ReviewDTO> fetchReviewsByUserId(int userId) {
-        // Check if the user exists
-        User user = userRepo.findById(userId)
+    public ReviewDto addReview(ReviewDto reviewDto) {
+        User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        Product product = productRepository.findById(reviewDto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Retrieve all reviews for the user
-        Optional<Reviews> reviewsList = reviewRepository.findByUserId(userId);
+        Review review = new Review();
+        review.setUser(user);
+        review.setProduct(product);
+        review.setRating(reviewDto.getRating());
+        review.setComment(reviewDto.getComment());
+        review.setReviewDate(new Date());
 
-        // Check if any reviews are found
-        if (reviewsList.isEmpty()) {
-            throw new RuntimeException("No reviews found for user ID " + userId);
+        Review savedReview = reviewRepository.save(review);
+        return convertToDto(savedReview);
+    }
+
+    public List<ReviewDto> getReviewsForProduct(int productId) {
+        List<Review> reviews = reviewRepository.findByProductId(productId);
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewDtos.add(convertToDto(review));
         }
-
-        // Convert the list of Reviews to a list of ReviewDTOs
-        return reviewsList.stream()
-                .map(this::converReviewToDTO)
-                .collect(Collectors.toList());
+        return reviewDtos;
     }
 
-    public List<ReviewDTO> getReviewsByProductId(Integer productId) {
-        List<Reviews> reviews = reviewRepository.findByProductId(productId);
-        return reviews.stream().map(this::converReviewToDTO).collect(Collectors.toList());
+    public List<ReviewDto> getAllReviewsByUserId(int userId) {
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+
+        for (Review review : reviews) {
+            ReviewDto reviewDto = new ReviewDto();
+            reviewDto.setId(review.getId());
+            reviewDto.setUserId(review.getUser().getId());
+            reviewDto.setProductId(review.getProduct().getId());
+            reviewDto.setRating(review.getRating());
+            reviewDto.setComment(review.getComment());
+            reviewDtos.add(reviewDto);
+        }
+        return reviewDtos;
     }
 
-    public ReviewDTO converReviewToDTO(Reviews reviews){
-        ReviewDTO reviewDTO=new ReviewDTO();
-        return new ReviewDTO(reviewDTO.getId(),
-                reviewDTO.getUserId(),
-                reviewDTO.getProductId(),
-                reviewDTO.getStars(),
-                reviewDTO.getComment());
-
+    private ReviewDto convertToDto(Review review) {
+        ReviewDto dto = new ReviewDto();
+        dto.setId(review.getId());
+        dto.setUserId(review.getUser().getId());
+        dto.setUserName(review.getUser().getName());
+        dto.setProductId(review.getProduct().getId());
+        dto.setRating(review.getRating());
+        dto.setComment(review.getComment());
+        dto.setReviewDate(review.getReviewDate());
+        return dto;
     }
-
-
 }
+

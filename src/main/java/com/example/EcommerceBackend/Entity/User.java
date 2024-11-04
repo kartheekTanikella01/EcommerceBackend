@@ -1,73 +1,42 @@
 package com.example.EcommerceBackend.Entity;
 
-import com.example.EcommerceBackend.enums.UserRoles;
+import com.example.EcommerceBackend.enums.UserRole;
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Entity
-public class User implements UserDetails {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "email")
+    private String name;
     private String email;
-
-    @Column(name = "password")
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
-
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private WishList wishList;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Address> addresses = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    private List<UserRoles> userRoles = new ArrayList<>();
+    private Set<UserRole> roles = new HashSet<>();
 
-    private String role;
+    public User() {
+    }
 
-    public User() {}
+    public User( String name, String email, String password) {
 
-
-    public User(String firstName, String lastName, String email, String password,List<UserRoles> userRoles,String role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.email = email;
         this.password = password;
-        this.userRoles = userRoles;
-        this.role=role;
-
-    }
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name())
-                ).collect(Collectors.toList());
     }
 
 
-
-    // Getters and setters...
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -77,20 +46,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -105,29 +66,16 @@ public class User implements UserDetails {
         return password;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public Cart getCart() {
-        return cart;
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public WishList getWishList() {
-        return wishList;
-    }
-
-    public void setWishList(WishList wishList) {
-        this.wishList = wishList;
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
     }
 
     public List<Address> getAddresses() {
@@ -137,21 +85,4 @@ public class User implements UserDetails {
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
     }
-    public List<UserRoles> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(List<UserRoles> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }
-
-

@@ -1,48 +1,35 @@
 package com.example.EcommerceBackend.DTO;
 
-import com.example.EcommerceBackend.Entity.Product;
-import com.example.EcommerceBackend.Entity.User;
-
 import java.util.List;
 
 public class WishlistDto {
+    private int id;
+    private int userId;
+    private List<ProductDto> products;
 
-    private Integer id;
-    private List<Product> product;
-
-    private Integer userId;
-
-    public WishlistDto() {
-
-    }
-
-    public WishlistDto(Integer id, List<ProductDto> productDtos, Integer userId) {
-        this.id = id;
-        this.product = product;
-        this.userId = userId;
-    }
-
-    public Integer getId() {
+    // Getters and Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public List<Product> getProduct() {
-        return product;
-    }
-
-    public void setProduct(List<Product> product) {
-        this.product = product;
-    }
-
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public List<ProductDto> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductDto> products) {
+        this.products = products;
+    }
 }
+

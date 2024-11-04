@@ -38,13 +38,13 @@ public class ProductController {
         return new ResponseEntity<>(new APIResponse(true, "Product has been added"), HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping("/sellar")
     public ResponseEntity<List<ProductDto>> getProducts() {
         List<ProductDto> products = productService.getAllProducts();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/sellar/{id}")
     public ResponseEntity<ProductDto> getProductbyId(@PathVariable int id){
         ProductDto productDto=productService.getProductByid(id);
 

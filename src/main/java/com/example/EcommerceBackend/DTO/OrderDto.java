@@ -1,70 +1,55 @@
 package com.example.EcommerceBackend.DTO;
 
-import com.example.EcommerceBackend.Entity.Address;
-
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDto {
-
-    private Integer userId;
-    private List<OrderItemDto> orderItems;
-    private LocalDateTime orderDate;
-
-    private List<OrderItemDto> orderItemDtoList;
-
-    private AddressDTO deliveryAddress;
+    private int id;
+    private double totalPrice;
+    private Date orderDate;
+    private List<OrderItemDto> items;
 
     public OrderDto() {
     }
 
-
-
-    public OrderDto(Integer userId, LocalDateTime orderDate, List<OrderItemDto> orderItemDtoList,AddressDTO deliveryAddress) {
-        this.userId = userId;
+    public OrderDto(int id, double totalPrice, Date orderDate, List<OrderItemDto> items) {
+        this.id = id;
+        this.totalPrice = totalPrice;
         this.orderDate = orderDate;
-        this.orderItemDtoList = orderItemDtoList;
-        this.deliveryAddress=deliveryAddress;
+        this.items = items;
+    }
+    // Getters and setters
 
+
+    public int getId() {
+        return id;
     }
 
-    public AddressDTO getDeliveryAddress() {
-        return deliveryAddress;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setDeliveryAddress(AddressDTO deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
-    public List<OrderItemDto> getOrderItemDtoList() {
-        return orderItemDtoList;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public void setOrderItemDtoList(List<OrderItemDto> orderItemDtoList) {
-        this.orderItemDtoList = orderItemDtoList;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public List<OrderItemDto> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItemDto> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    public LocalDateTime getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public List<OrderItemDto> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItemDto> items) {
+        this.items = items;
     }
 }
