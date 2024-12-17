@@ -37,7 +37,7 @@ public class ReviewService {
         review.setProduct(product);
         review.setRating(reviewDto.getRating());
         review.setComment(reviewDto.getComment());
-        review.setReviewDate(new Date());
+
 
         Review savedReview = reviewRepository.save(review);
         return convertToDto(savedReview);

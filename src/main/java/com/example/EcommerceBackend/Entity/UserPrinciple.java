@@ -31,12 +31,10 @@ public class UserPrinciple implements UserDetails {
     public String getPassword() {
         return user.getPassword();
     }
-
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.getEmail();
     }
-
     @Override
     public boolean isEnabled() {
         return true;

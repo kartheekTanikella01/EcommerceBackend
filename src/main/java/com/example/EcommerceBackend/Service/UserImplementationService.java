@@ -15,9 +15,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserImplementationService implements UserDetailsService {
@@ -25,13 +27,16 @@ public class UserImplementationService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
 
+    private final EmailService emailService;
+
 
 
     @Autowired
-    public UserImplementationService(UserRepo userRepo, PasswordEncoder passwordEncoder, AddressRepository addressRepository) {
+    public UserImplementationService(UserRepo userRepo, PasswordEncoder passwordEncoder, AddressRepository addressRepository, EmailService emailService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.addressRepository = addressRepository;
+        this.emailService = emailService;
     }
 
     public List<User> findAllUsers() {
@@ -50,6 +55,7 @@ public class UserImplementationService implements UserDetailsService {
     public User updateUser(int id, User updatedUser) {
         return userRepo.findById(id).map(user -> {
             user.setName(updatedUser.getName());
+            user.setEmail(updatedUser.getEmail());
             user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             user.setRoles(updatedUser.getRoles());
             return userRepo.save(user);
@@ -64,9 +70,9 @@ public class UserImplementationService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user=userRepo.findByName(username);
+        User user=userRepo.findByEmail(username);
 
-        if (username==null){
+        if (user==null){
             System.out.println("user not found");
             throw  new UsernameNotFoundException("User not found ");
         }
@@ -105,6 +111,46 @@ public class UserImplementationService implements UserDetailsService {
             addressDTOs.add(dto);
         }
         return addressDTOs;
+    }
+
+    //generate the otp
+    public void genearateOtpandSend(String email){
+        User user=userRepo.findByEmail(email);
+        if(user== null){
+            throw  new RuntimeException("USer not found");
+        }
+
+        //Generate otp(6 letter)
+        String otp=String.valueOf(100000 + new Random().nextInt(900000));
+        user.setOtp(otp);
+        user.setLocalDateTime(LocalDateTime.now().plusMinutes(2));
+        userRepo.save(user);
+        // Send OTP email
+        String subject = "Your OTP for Login";
+        String body = "Dear User,\n\nYour OTP for login is: " + otp + "\n\nThis OTP will expire in 2 minutes.\n\nThank you!";
+        emailService.sendOtpEmail(email, subject, body);
+
+        System.out.println("OTP sent to " + email);
+
+        System.out.println("otp sent to"+email);
+    }
+
+    //method to verify the otp
+    public boolean verifyOtp(String email,String otp){
+        User user=userRepo.findByEmail(email);
+        if(user== null || user.getOtp()==null){
+            throw new RuntimeException("invalid username or otp");
+        }
+        if (user.getOtp().equals(otp) && user.getLocalDateTime().isAfter(LocalDateTime.now())) {
+            user.setOtp(null);
+            user.setLocalDateTime(null);
+            user.setOtpVerified(true);
+            userRepo.save(user);
+            return true;
+        } else {
+            throw new RuntimeException("Invalid or Expired OTP");
+        }
+
     }
 
 

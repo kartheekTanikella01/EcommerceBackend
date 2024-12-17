@@ -24,6 +24,8 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private UserRepo userRepository;
@@ -64,6 +66,18 @@ public class OrderService {
         // Clear the cart after moving items to order
         cart.getItems().clear();
         cartRepository.save(cart);
+
+        // Send confirmation email
+        String subject = "Order Confirmation - Order #" + order.getId();
+        String body = "Dear " + user.getName() + ",\n\n"
+                + "Thank you for your order! Your order has been received and is being processed.\n"
+                + "Order ID: " + order.getId() + "\n"
+                + "Total Price: $" + totalPrice + "\n"
+                + "Order Date: " + order.getOrderDate() + "\n\n"
+                + "We will notify you once your order has been shipped.\n\n"
+                + "Thank you for shopping with us!";
+
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, body);
 
         // Convert order to DTO and return
         return convertToOrderDTO(order);

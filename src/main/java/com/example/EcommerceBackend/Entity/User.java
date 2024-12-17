@@ -3,6 +3,7 @@ package com.example.EcommerceBackend.Entity;
 import com.example.EcommerceBackend.enums.UserRole;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,15 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    private String Otp;
+
+    private LocalDateTime localDateTime;
+    private boolean isOtpVerified;
+
+    // Getter and Setter
+
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -84,5 +94,30 @@ public class User {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public String getOtp() {
+        return Otp;
+    }
+
+    public void setOtp(String otp) {
+        Otp = otp;
+    }
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+
+    public boolean isOtpVerified() {
+        return isOtpVerified;
+    }
+
+    public void setOtpVerified(boolean otpVerified) {
+        isOtpVerified = otpVerified;
     }
 }

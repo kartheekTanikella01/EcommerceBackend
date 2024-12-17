@@ -1,6 +1,8 @@
 package com.example.EcommerceBackend.Configuration;
 
 import com.example.EcommerceBackend.Filter.JwtAuthenticationFilter;
+import com.example.EcommerceBackend.Filter.OtpVerificationFilter;
+import com.example.EcommerceBackend.Repository.UserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,18 +22,22 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    private final UserRepo userRepo;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserRepo userRepo) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userRepo = userRepo;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf->csrf.disable())
                 .authorizeRequests()
-                .requestMatchers("/auth/authenticate", "/register").permitAll()
+                .requestMatchers("/auth/**", "/register").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/users/**", "/wishlist/**", "/cart/**", "/order/**").hasAuthority("USER")
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                        .and().addFilterBefore(new OtpVerificationFilter(userRepo), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
